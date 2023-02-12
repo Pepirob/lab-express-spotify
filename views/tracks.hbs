@@ -1,0 +1,8 @@
+<header>
+  <a href="/albums/">Albums</a>
+  <h3>Title <span>Listen</span></h3>
+</header>
+{{#each trackInfo}}
+  <p>{{this.name}}</p>
+  <audio src="{{this.preview}}" controls></audio>
+{{/each}}

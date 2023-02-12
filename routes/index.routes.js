@@ -29,10 +29,10 @@ router.get("/", async (req, res, next) => {
 router.get("/artist-search", (req, res, next) => {
   // console.log(req.query.artist)
   spotifyApi
-    .searchArtists(req.query.artist)
+    .searchArtists(req.query.artist, { limit: 6 })
     .then((data) => {
       const { items } = data.body.artists;
-      // console.log(items);
+      // console.log(data.body);
       const info = [];
       items.forEach((eachArtist) => {
         info.push({
@@ -52,27 +52,46 @@ router.get("/artist-search", (req, res, next) => {
 });
 router.get("/albums/:id", (req, res, next) => {
   spotifyApi
-  .getArtistAlbums(req.params.id)
-  .then((data) => {
-    const { items } = data.body;
-    const info = [];
-    items.forEach((eachAlbum) => {
-      info.push({
-        name: eachAlbum.name,
-        image: eachAlbum.images[0],
-        id: eachAlbum.id
-      })
-    })
-      console.log('Artist albums', info);
+    .getArtistAlbums(req.params.id)
+    .then((data) => {
+      const { items } = data.body;
+      const info = [];
+      items.forEach((eachAlbum) => {
+        info.push({
+          name: eachAlbum.name,
+          image: eachAlbum.images[0],
+          id: eachAlbum.id,
+        });
+      });
+      // console.log('Artist albums', info);
       res.render("albums.hbs", {
-        albumInfo: info
-      })
-  })
-  .catch ((err) => {
-    console.log(err)
-  })
-  
+        albumInfo: info,
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 });
-
+router.get("/albums/tracks/:id", (req, res, next) => {
+  spotifyApi
+    .getAlbumTracks(req.params.id)
+    .then((data) => {
+      const { items } = data.body;
+      const info = [];
+      items.forEach((eachTrack) => {
+        info.push({
+          name: eachTrack.name,
+          preview: eachTrack.preview_url,
+        });
+      });
+      // console.log(items);
+      res.render("tracks.hbs", {
+        trackInfo: info,
+      });
+    })
+    .catch((err) => {
+      console.log("Something went wrong!", err);
+    });
+});
 
 module.exports = router;
